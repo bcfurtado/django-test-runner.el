@@ -29,6 +29,11 @@
   :group 'django-test
   :type 'stringp)
 
+(defcustom django-test-keepdb nil
+  "Specifies the settings module to use."
+  :group 'django-test
+  :type 'booleanp)
+
 (defun is-nil (element)
   "Check if ELEMENT is nil."
   (eq element nil))
@@ -72,6 +77,11 @@ contains the manage.py."
         django-test-settings-module)
       "=")))
 
+(defun django-test-generate-keepdb ()
+  "Generate settings option."
+  (when django-test-keepdb
+    "--keepdb"))
+
 (defun django-test-generate-test-command ()
   "Generate the test command."
   (let ((command (seq-map 'cdr
@@ -81,6 +91,7 @@ contains the manage.py."
                      (cons 'command django-test-command)
                      (cons 'module (django-test-generate-python-module-at-point))
                      (cons 'noinput django-test-command-params-no-input)
+		     (cons 'keepdb (django-test-generate-keepdb))
                      (cons 'settings-module (django-test-generate-settings-module))))))
     (string-join command " ")))
 
