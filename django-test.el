@@ -34,17 +34,23 @@ contains the manage.py."
   "Return the path of the file to be tested relative to the project root directory."
   (file-relative-name (buffer-file-name) (django-test-project-folder)))
 
-(defun django-test-python-module-from-file-path ()
+(defun django-test-convert-path-into-python-module (path)
+  "Convert PATH into python module."
+  (replace-regexp-in-string "/" "."
+    (string-join
+      (list
+        (file-name-directory path)
+        (file-name-base path)))))
+
+(defun django-test-current-module ()
   "Return the current python module based on file path."
-  (let* ((path-file (django-test-file-path))
-         (module-name (substring path-file 0 (string-match ".py" path-file))))
-    (replace-regexp-in-string "/" "." module-name)))
+  (django-test-convert-path-into-python-module (django-test-file-path)))
 
 (defun django-test-generate-python-module-at-point ()
   "Generate python module at the point."
   (let ((full-module (seq-map 'cdr
                       (list
-                        (cons 'module (django-test-python-module-from-file-path))
+                        (cons 'module (django-test-current-module))
                         (cons 'function (python-info-current-defun))))))
     (string-join (seq-remove 'is-nil full-module) ".")))
 
