@@ -93,7 +93,7 @@ contains the manage.py."
                      (cons 'noinput django-test-command-params-no-input)
 		     (cons 'keepdb (django-test-generate-keepdb))
                      (cons 'settings-module (django-test-generate-settings-module))))))
-    (string-join command " ")))
+    (string-trim (string-join command " "))))
 
 
 (defun django-test-run-test-at-point ()
