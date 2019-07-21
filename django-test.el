@@ -20,6 +20,15 @@
 (defconst django-test-command "test")
 (defconst django-test-command-params-no-input "--no-input")
 
+(defgroup django-test nil
+  "Quickly execute django tests"
+  :group 'convenience)
+
+(defcustom django-test-settings-module nil
+  "Specifies the settings module to use."
+  :group 'django-test
+  :type 'stringp)
+
 (defun is-nil (element)
   "Check if ELEMENT is nil."
   (eq element nil))
@@ -54,6 +63,15 @@ contains the manage.py."
                         (cons 'function (python-info-current-defun))))))
     (string-join (seq-remove 'is-nil full-module) ".")))
 
+(defun django-test-generate-settings-module ()
+  "Generate settings option."
+  (when django-test-settings-module
+    (string-join
+      (list
+        "--settings"
+        django-test-settings-module)
+      "=")))
+
 (defun django-test-generate-test-command ()
   "Generate the test command."
   (let ((command (seq-map 'cdr
@@ -62,7 +80,8 @@ contains the manage.py."
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
                      (cons 'module (django-test-generate-python-module-at-point))
-                     (cons 'noinput django-test-command-params-no-input)))))
+                     (cons 'noinput django-test-command-params-no-input)
+                     (cons 'settings-module (django-test-generate-settings-module))))))
     (string-join command " ")))
 
 
