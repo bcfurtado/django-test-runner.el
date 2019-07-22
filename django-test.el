@@ -4,6 +4,9 @@
 
 ;; Author: Bruno Furtado <bruno@bcfurtado.com>
 ;; Keywords: convenience
+;; URL: https://github.com/bcfurtado/django-test.el
+;; Package-Version: 0
+;; Package-Requires: ((emacs "24.4"))
 
 ;;; Commentary:
 
@@ -109,4 +112,4 @@ will be even more specific."
         (kill-buffer project-root-folder)))))
 
 (provide 'django-test)
-;;; django-test ends here
+;;; django-test.el ends here
