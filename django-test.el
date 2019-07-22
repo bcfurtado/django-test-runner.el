@@ -34,10 +34,6 @@
   :group 'django-test
   :type 'booleanp)
 
-(defun is-nil (element)
-  "Check if ELEMENT is nil."
-  (eq element nil))
-
 (defun django-test-project-folder ()
   "Return Django root project path.
 Currently, we are assuming that the root folder is the one that
@@ -66,7 +62,7 @@ contains the manage.py."
                       (list
                         (cons 'module (django-test-current-module))
                         (cons 'function (python-info-current-defun))))))
-    (string-join (seq-remove 'is-nil full-module) ".")))
+    (string-join (delq nil full-module) ".")))
 
 (defun django-test-generate-settings-module ()
   "Generate settings option."
