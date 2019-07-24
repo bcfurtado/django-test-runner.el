@@ -94,6 +94,14 @@ contains the manage.py."
                      (cons 'settings-module (django-test--generate-settings-module))))))
     (string-trim (string-join command " "))))
 
+(defun django-test--run-test-command (project-root-folder command)
+  "Invoke the compile mode with the test COMMAND on the PROJECT-ROOT-FOLDER."
+  (save-excursion
+    (setq compilation-read-command t)
+    (set-buffer project-root-folder)
+    (setq compile-command command)
+    (call-interactively 'compile)
+    (kill-buffer project-root-folder)))
 
 (defun django-test-run-test-at-point ()
   "Run django test at the point.
@@ -102,14 +110,9 @@ run only the tests for the specific file.
 Keep your cursor under the class name or the function and the command
 will be even more specific."
   (interactive)
-  (let* ((command (django-test--generate-test-command)))
-    (save-excursion
-      (let* ((project-root-folder (find-file-noselect (django-test--project-folder))))
-        (setq compilation-read-command t)
-        (set-buffer project-root-folder)
-        (setq compile-command command)
-        (call-interactively 'compile)
-        (kill-buffer project-root-folder)))))
+  (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
+         (command (django-test--generate-test-command)))
+    (django-test--run-test-command project-root-folder command)))
 
 (provide 'django-test)
 ;;; django-test.el ends here
