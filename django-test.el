@@ -81,14 +81,27 @@ contains the manage.py."
   (when django-test-keepdb
     "--keepdb"))
 
-(defun django-test--generate-test-command ()
-  "Generate the test command."
+(defun django-test--generate-at-point-test-command ()
+  "Generate at the point test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
                      (cons 'module (django-test--generate-python-module-at-point))
+                     (cons 'noinput django-test-command-params-no-input)
+		     (cons 'keepdb (django-test--generate-keepdb))
+                     (cons 'settings-module (django-test--generate-settings-module))))))
+    (string-trim (string-join command " "))))
+
+(defun django-test--generate-module-test-command ()
+  "Generate module test command."
+  (let ((command (seq-map 'cdr
+                   (list
+                     (cons 'python-interpreter python-shell-interpreter)
+                     (cons 'manage-py django-test-manage-py)
+                     (cons 'command django-test-command)
+                     (cons 'module (django-test--current-module))
                      (cons 'noinput django-test-command-params-no-input)
 		     (cons 'keepdb (django-test--generate-keepdb))
                      (cons 'settings-module (django-test--generate-settings-module))))))
@@ -104,14 +117,17 @@ contains the manage.py."
     (kill-buffer project-root-folder)))
 
 (defun django-test-run-test-at-point ()
-  "Run django test at the point.
-Invoke this function and you'll be promoted with the exact command to
-run only the tests for the specific file.
-Keep your cursor under the class name or the function and the command
-will be even more specific."
+  "Run django test at the point."
   (interactive)
   (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
-         (command (django-test--generate-test-command)))
+         (command (django-test--generate-at-point-test-command)))
+    (django-test--run-test-command project-root-folder command)))
+
+(defun django-test-run-test-module ()
+  "Run django test from the current module."
+  (interactive)
+  (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
+         (command (django-test--generate-module-test-command)))
     (django-test--run-test-command project-root-folder command)))
 
 (provide 'django-test)
