@@ -107,6 +107,18 @@ contains the manage.py."
                      (cons 'settings-module (django-test--generate-settings-module))))))
     (string-trim (string-join command " "))))
 
+(defun django-test--generate-project-test-command ()
+  "Generate project test command."
+  (let ((command (seq-map 'cdr
+                   (list
+                     (cons 'python-interpreter python-shell-interpreter)
+                     (cons 'manage-py django-test-manage-py)
+                     (cons 'command django-test-command)
+                     (cons 'noinput django-test-command-params-no-input)
+		     (cons 'keepdb (django-test--generate-keepdb))
+                     (cons 'settings-module (django-test--generate-settings-module))))))
+    (string-trim (string-join command " "))))
+
 (defun django-test--run-test-command (project-root-folder command)
   "Invoke the compile mode with the test COMMAND on the PROJECT-ROOT-FOLDER."
   (save-excursion
@@ -128,6 +140,13 @@ contains the manage.py."
   (interactive)
   (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
          (command (django-test--generate-module-test-command)))
+    (django-test--run-test-command project-root-folder command)))
+
+(defun django-test-run-test-project ()
+  "Run all the tests of the current project."
+  (interactive)
+  (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
+         (command (django-test--generate-project-test-command)))
     (django-test--run-test-command project-root-folder command)))
 
 (provide 'django-test)
