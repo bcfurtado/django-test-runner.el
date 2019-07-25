@@ -6,7 +6,7 @@
 ;; Keywords: convenience
 ;; URL: https://github.com/bcfurtado/django-test.el
 ;; Package-Version: 0
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "24.4") (transient "0.1.0"))
 
 ;;; Commentary:
 
@@ -31,11 +31,6 @@
   "Specifies the settings module to use."
   :group 'django-test
   :type 'stringp)
-
-(defcustom django-test-keepdb nil
-  "Specifies the settings module to use."
-  :group 'django-test
-  :type 'booleanp)
 
 (defun django-test--project-folder ()
   "Return Django root project path.
@@ -76,48 +71,37 @@ contains the manage.py."
         django-test-settings-module)
       "=")))
 
-(defun django-test--generate-keepdb ()
-  "Generate settings option."
-  (when django-test-keepdb
-    "--keepdb"))
-
-(defun django-test--generate-at-point-test-command ()
-  "Generate at the point test command."
+(defun django-test--generate-at-point-test-command (&optional args)
+  "Generate the test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
                      (cons 'module (django-test--generate-python-module-at-point))
-                     (cons 'noinput django-test-command-params-no-input)
-		     (cons 'keepdb (django-test--generate-keepdb))
                      (cons 'settings-module (django-test--generate-settings-module))))))
-    (string-trim (string-join command " "))))
+    (string-trim (string-join (append command args) " "))))
 
-(defun django-test--generate-module-test-command ()
-  "Generate module test command."
+(defun django-test--generate-module-test-command (&optional args)
+  "Generate the test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
                      (cons 'module (django-test--current-module))
-                     (cons 'noinput django-test-command-params-no-input)
-		     (cons 'keepdb (django-test--generate-keepdb))
                      (cons 'settings-module (django-test--generate-settings-module))))))
-    (string-trim (string-join command " "))))
+    (string-trim (string-join (append command args) " "))))
 
-(defun django-test--generate-project-test-command ()
+(defun django-test--generate-project-test-command (&optional args)
   "Generate project test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
-                     (cons 'noinput django-test-command-params-no-input)
-		     (cons 'keepdb (django-test--generate-keepdb))
                      (cons 'settings-module (django-test--generate-settings-module))))))
-    (string-trim (string-join command " "))))
+    (string-trim (string-join (append command args) " "))))
 
 (defun django-test--run-test-command (project-root-folder command)
   "Invoke the compile mode with the test COMMAND on the PROJECT-ROOT-FOLDER."
@@ -128,26 +112,41 @@ contains the manage.py."
     (call-interactively 'compile)
     (kill-buffer project-root-folder)))
 
-(defun django-test-run-test-at-point ()
+(defun django-test-run-test-at-point (&optional args)
   "Run django test at the point."
-  (interactive)
+  (interactive (list (django-test-arguments)))
   (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
-         (command (django-test--generate-at-point-test-command)))
+         (command (django-test--generate-at-point-test-command args)))
     (django-test--run-test-command project-root-folder command)))
 
-(defun django-test-run-test-module ()
+(defun django-test-run-test-module (&optional args)
   "Run django test from the current module."
-  (interactive)
+  (interactive (list (django-test-arguments)))
   (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
-         (command (django-test--generate-module-test-command)))
+         (command (django-test--generate-module-test-command args)))
     (django-test--run-test-command project-root-folder command)))
 
-(defun django-test-run-test-project ()
+(defun django-test-run-test-project (&optional args)
   "Run all the tests of the current project."
-  (interactive)
+  (interactive (list (django-test-arguments)))
   (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
-         (command (django-test--generate-project-test-command)))
+         (command (django-test--generate-project-test-command args)))
     (django-test--run-test-command project-root-folder command)))
+
+(define-transient-command django-test-runner ()
+  "Open django test pop up."
+  ["Arguments"
+   ("-k" "Preserves the test DB between runs."   ("-k" "--keepdb"))
+   ("-n" "Tells Django to NOT prompt the user for input of any kind." "--no-input")]
+  [["Test"
+    ("c" "Function"       django-test-run-test-at-point)
+    ("m" "Module"         django-test-run-test-module)
+    ("p" "Project"        django-test-run-test-project)]]
+  (interactive)
+  (transient-setup 'django-test-runner))
+
+(defun django-test-arguments nil
+  (transient-args 'django-test-runner))
 
 (provide 'django-test)
 ;;; django-test.el ends here
