@@ -141,7 +141,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
    ("-k" "Preserves the test DB between runs."   ("-k" "--keepdb"))
    ("-n" "Tells Django to NOT prompt the user for input of any kind." "--no-input")]
   [["Test"
-    ("c" "Function"       django-test-run-test-at-point)
+    ("f" "Function"       django-test-run-test-at-point)
     ("m" "Module"         django-test-run-test-module)
     ("p" "Project"        django-test-run-test-project)]]
   (interactive)
