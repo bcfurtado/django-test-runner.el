@@ -27,11 +27,6 @@
   "Quickly execute django tests"
   :group 'convenience)
 
-(defcustom django-test-settings-module nil
-  "Specifies the settings module to use."
-  :group 'django-test
-  :type 'stringp)
-
 (defun django-test--project-folder ()
   "Return Django root project path.
 Currently, we are assuming that the root folder is the one that
@@ -62,15 +57,6 @@ contains the manage.py."
                         (cons 'function (python-info-current-defun))))))
     (string-join (delq nil full-module) ".")))
 
-(defun django-test--generate-settings-module ()
-  "Generate settings option."
-  (when django-test-settings-module
-    (string-join
-      (list
-        "--settings"
-        django-test-settings-module)
-      "=")))
-
 (defun django-test--generate-at-point-test-command ()
   "Generate the test command."
   (let ((command (seq-map 'cdr
@@ -78,8 +64,7 @@ contains the manage.py."
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
-                     (cons 'module (django-test--generate-python-module-at-point))
-                     (cons 'settings-module (django-test--generate-settings-module))))))
+                     (cons 'module (django-test--generate-python-module-at-point))))))
     (string-trim (string-join command " "))))
 
 (defun django-test--generate-module-test-command ()
@@ -89,8 +74,7 @@ contains the manage.py."
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
-                     (cons 'module (django-test--current-module))
-                     (cons 'settings-module (django-test--generate-settings-module))))))
+                     (cons 'module (django-test--current-module))))))
     (string-trim (string-join command " "))))
 
 (defun django-test--generate-project-test-command ()
@@ -99,8 +83,7 @@ contains the manage.py."
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
-                     (cons 'command django-test-command)
-                     (cons 'settings-module (django-test--generate-settings-module))))))
+                     (cons 'command django-test-command)))))
     (string-trim (string-join command " "))))
 
 (defun django-test--run-test-command (prefix-command &optional args)
@@ -135,11 +118,18 @@ executed with `comint-mode', otherwise with `compile-mode'."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-project-test-command) args))
 
+(define-infix-argument django-test-runner:--settings ()
+  :description "Run with a custom settings module"
+  :class 'transient-option
+  :shortarg "-s"
+  :argument "--settings=")
+
 (define-transient-command django-test-runner ()
   "Open django test pop up."
   ["Arguments"
    ("-k" "Preserves the test DB between runs."   ("-k" "--keepdb"))
-   ("-n" "Tells Django to NOT prompt the user for input of any kind." "--no-input")]
+   ("-n" "Tells Django to NOT prompt the user for input of any kind." "--no-input")
+   (django-test-runner:--settings)]
   [["Test"
     ("f" "Function"       django-test-run-test-at-point)
     ("m" "Module"         django-test-run-test-module)
