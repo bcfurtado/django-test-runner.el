@@ -18,6 +18,7 @@
 (require 'compile)
 (require 'python)
 (require 'subr-x)
+(require 'transient)
 
 (defconst django-test-manage-py "manage.py")
 (defconst django-test-command "test")
