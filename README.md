@@ -1,12 +1,15 @@
 # django-test.el
 
-Quickly execute django tests.
+Quickly execute Django tests.
 
 ![](./docs/django-test-screenshot.png)
 
 ## What it does?
 
-This package provides a function to generate commands to run specific django tests. Invoke the function anywhere on the python file, and you'll have a test command for that file. When the cursor is at the class or method name, it will detect it and generate a specific command for it. You can see it in use [here](https://streamable.com/n67u9).
+This package provides a function to generate commands to run specific Django tests. Invoke the function anywhere on the python file, and you'll have a test command for that file. When the cursor is at the class or method name, it generates a specific command for it. You can see it in use [here](https://streamable.com/hf593).
+
+## Motivation
+A quick feedback cycle is key for good and efficient development workflow. TDD helps with that, and this package aims to give you the necessary tooling when executing Django tests on Emacs.
 
 ## Quickstart
 
@@ -14,26 +17,38 @@ This package provides a function to generate commands to run specific django tes
 
 ``` emacs-lisp
 (require 'django-test)
-(define-key python-mode-map (kbd "<f7>") 'django-test-run-test-at-point)
+(define-key python-mode-map (kbd "<f10>") 'django-test-runner)
 ```
 
 ### Basic Usage
-- Open a django test file.
-- Go to a class or method that you want to execute the test.
-- Invoke `django-test-run-test-at-point` function.
-- You will be prompted to insert test command. Press <kbd>RET</kbd> to accept `django-test.el` suggestion.
-- The command will be executed on a new window with the help of the `compilation` mode.
+- On a Django test case, go to a class or method that you want to execute the tests.
+- Invoke `django-test-runner` function.
+- Choose the proper options on the pop-up. Press <kbd>RET</kbd>.
+- Press <kbd>RET</kbd> again to accept `django-test.el`  suggestion.
 
-On the compilation buffer, you can press <kbd>g</kbd> to re-run the tests. You can check it out more about compilation mode on emacs manual [here](https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation.html#Compilation) and [here](https://www.gnu.org/software/emacs/manual/html_node/emacs/Compilation-Mode.html#Compilation-Mode).
+#### Notes
+- The compile command is always executed with the `comint-mode`, unless `--no-input` option is selected. This behavior is required in case `manage.py` try to interact with you. `commint-mode` allows you to interact with the subprocess in case you need it.
+- For a better experience, keep the `--no-input` always enabled and the `compile` will run without `comint-mode`. Now you can use `compilation-mode` keybind like  <kbd>g</kbd> (`recompile`), <kbd>M-g n</kbd> (`next-error`) and <kbd>M-g p</kbd> (`previous-error`) on `*compilation*` buffer.
+- To save your command preferences, e.g. keep `--no-input` enabled by default, press  <kbd>C-x C-s</kbd> `(transient-save)` while the pop-up is open.
 
-This package currently supports a few extra options available on [`manage.py`](https://docs.djangoproject.com/en/2.2/ref/django-admin/) to run your tests with it. You can see the list of with all the options available to customization on the below.
+#### Extra tips
+- Compilation mode does not scroll down the buffer window as the output appears by default. If you want this behavior you should:
 
-| Customizable Variable         | Command option                                                                              | Example               |
-|-------------------------------|---------------------------------------------------------------------------------------------|-----------------------|
-| `django-test-settings-module` | [`--settings`](https://docs.djangoproject.com/en/2.2/ref/django-admin/#cmdoption-settings)  | "production_settings" |
-| `django-test-keepdb`          | [`--keepdb`](https://docs.djangoproject.com/en/2.2/ref/django-admin/#cmdoption-test-keepdb) | t                     |
+``` emacs-lisp
+(setq compilation-scroll-output t)
+```
+- It can be useful to automatically select `*compilation*` buffer when the command is executed. You can achieve this behavior by advising the `compile` command.
 
+``` emacs-lisp
+(defun follow-compilation (&rest args)
+  (when (get-buffer "*compilation*")
+    (switch-to-buffer-other-window "*compilation*")))
+
+(advice-add 'compile :after follow-compilation)
+```
+
+More information about the Django test options can be found on [`Django documentation`](https://docs.djangoproject.com/en/2.2/ref/django-admin/).
 
 ## License
 
-Distributed under the GNU General Public License, version 3
+Distributed under the GNU General Public License, version 3.
