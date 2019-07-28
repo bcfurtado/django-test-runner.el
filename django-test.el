@@ -129,7 +129,8 @@ executed with `comint-mode', otherwise with `compile-mode'."
   "Open django test pop up."
   ["Arguments"
    ("-k" "Preserves the test DB between runs."   ("-k" "--keepdb"))
-   ("-n" "Do NOT prompt any user input. ."       "--no-input")
+   ("-n" "Do NOT prompt any user input."         "--no-input")
+   ("-f" "Stop at the first failed test."        "--failfast")
    (django-test-runner:--settings)]
   [["Test"
     ("f" "Function"       django-test-run-test-at-point)
