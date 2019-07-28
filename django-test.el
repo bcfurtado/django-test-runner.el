@@ -59,7 +59,7 @@ contains the manage.py."
     (string-join (delq nil full-module) ".")))
 
 (defun django-test--generate-at-point-test-command ()
-  "Generate the test command."
+  "Generate function test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
@@ -69,7 +69,7 @@ contains the manage.py."
     (string-trim (string-join command " "))))
 
 (defun django-test--generate-module-test-command ()
-  "Generate the test command."
+  "Generate module test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
