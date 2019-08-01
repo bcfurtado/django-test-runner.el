@@ -22,11 +22,6 @@
 
 (defconst django-test-manage-py "manage.py")
 (defconst django-test-command "test")
-(defconst django-test-command-params-no-input "--no-input")
-
-(defgroup django-test nil
-  "Quickly execute django tests"
-  :group 'convenience)
 
 (defun django-test--project-folder ()
   "Return Django root project path.
