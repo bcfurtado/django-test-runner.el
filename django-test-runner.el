@@ -1,10 +1,10 @@
-;;; django-test.el --- Quickly execute django tests  -*- lexical-binding: t; -*-
+;;; django-test-runner.el --- Quickly execute django tests  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019  Bruno Furtado
 
 ;; Author: Bruno Furtado <bruno@bcfurtado.com>
 ;; Keywords: convenience
-;; URL: https://github.com/bcfurtado/django-test.el
+;; URL: https://github.com/bcfurtado/django-test-runner.el
 ;; Package-Version: 0
 ;; Package-Requires: ((emacs "24.4") (transient "0.1.0"))
 
@@ -137,5 +137,5 @@ executed with `comint-mode', otherwise with `compile-mode'."
 (defun django-test-arguments nil
   (transient-args 'django-test-runner))
 
-(provide 'django-test)
-;;; django-test.el ends here
+(provide 'django-test-runner)
+;;; django-test-runner.el ends here

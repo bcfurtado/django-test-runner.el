@@ -1,4 +1,4 @@
-# django-test.el
+# django-test-runner.el
 
 Quickly execute Django tests.
 
@@ -24,7 +24,7 @@ A quick feedback cycle is key for good and efficient development workflow. TDD h
 - On a Django test case, go to a class or method that you want to execute the tests.
 - Invoke `django-test-runner` function.
 - Choose the proper options on the pop-up. Press <kbd>RET</kbd>.
-- Press <kbd>RET</kbd> again to accept `django-test.el`  suggestion.
+- Press <kbd>RET</kbd> again to accept `django-test-runner.el`  suggestion.
 
 #### Notes
 - The compile command is always executed with the `comint-mode`, unless `--no-input` option is selected. This behavior is required in case `manage.py` try to interact with you. `commint-mode` allows you to interact with the subprocess in case you need it.
