@@ -15,8 +15,24 @@ A quick feedback cycle is key for good and efficient development workflow. TDD h
 
 ### Installation
 
+This package is not on melpa yet. If you would like to install in the mean time and you are using [use-package](https://github.com/jwiegley/use-package) and [straight.el](https://github.com/raxod502/straight.el), you can:
+
 ``` emacs-lisp
-(require 'django-test)
+(use-package django-test-runner
+  :straight (:host github
+             :repo "bcfurtado/django-test-runner.el"))
+
+(use-package python
+  :after (django-test-runner)
+  :bind (:map python-mode-map
+         ("<f10>" . django-test-runner)))
+```
+
+Otherwise, save `django-test-runner.el` locally and install [`transient`](https://github.com/magit/transient) package. `transient` is [available in melpa](https://melpa.org/#/transient).
+
+``` emacs-lisp
+(load "~/.emacs.d/django-test-runner.el")
+(require 'django-test-runner)
 (define-key python-mode-map (kbd "<f10>") 'django-test-runner)
 ```
 
