@@ -15,7 +15,7 @@ A quick feedback cycle is key for good and efficient development workflow. TDD h
 
 ### Installation
 
-This package is not on melpa yet. If you would like to install in the mean time and you are using [use-package](https://github.com/jwiegley/use-package) and [straight.el](https://github.com/raxod502/straight.el), you can:
+This package is not on melpa yet. If you would like to install it in the meantime and you are using [use-package](https://github.com/jwiegley/use-package) and [straight.el](https://github.com/raxod502/straight.el), you can:
 
 ``` emacs-lisp
 (use-package django-test-runner
