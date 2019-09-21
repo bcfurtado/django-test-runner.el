@@ -45,12 +45,26 @@ contains the manage.py."
   "Return the current python module based on file path."
   (django-test--convert-path-into-python-module (django-test--file-path)))
 
-(defun django-test--generate-python-module-at-point ()
-  "Generate python module at the point."
+(defun django-test--current-class ()
+  "Return ."
+  (let ((current-defun (python-info-current-defun)))
+    (when current-defun
+      (car (split-string current-defun "\\.")))))
+
+(defun django-test--generate-python-module-with-function ()
+  "Generate python module with current function."
   (let ((full-module (seq-map 'cdr
                       (list
                         (cons 'module (django-test--current-module))
                         (cons 'function (python-info-current-defun))))))
+    (string-join (delq nil full-module) ".")))
+
+(defun django-test--generate-python-module-with-class ()
+  "Generate python module with current class."
+  (let ((full-module (seq-map 'cdr
+                      (list
+                        (cons 'module (django-test--current-module))
+                        (cons 'function (django-test--current-class))))))
     (string-join (delq nil full-module) ".")))
 
 (defun django-test--generate-function-test-command ()
@@ -60,7 +74,17 @@ contains the manage.py."
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-manage-py)
                      (cons 'command django-test-command)
-                     (cons 'module (django-test--generate-python-module-at-point))))))
+                     (cons 'module (django-test--generate-python-module-with-function))))))
+    (string-trim (string-join command " "))))
+
+(defun django-test--generate-class-test-command ()
+  "Generate function test command."
+  (let ((command (seq-map 'cdr
+                   (list
+                     (cons 'python-interpreter python-shell-interpreter)
+                     (cons 'manage-py django-test-manage-py)
+                     (cons 'command django-test-command)
+                     (cons 'module (django-test--generate-python-module-with-class))))))
     (string-trim (string-join command " "))))
 
 (defun django-test--generate-module-test-command ()
@@ -104,6 +128,11 @@ executed with `comint-mode', otherwise with `compile-mode'."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-function-test-command) args))
 
+(defun django-test-run-test-class (&optional args)
+  "Run django test at the point."
+  (interactive (list (django-test-arguments)))
+  (django-test--run-test-command (django-test--generate-class-test-command) args))
+
 (defun django-test-run-test-module (&optional args)
   "Run django test from the current module."
   (interactive (list (django-test-arguments)))
@@ -129,6 +158,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
    (django-test-runner:--settings)]
   [["Test"
     ("f" "Function"       django-test-run-test-function)
+    ("c" "Class"          django-test-run-test-class)
     ("m" "Module"         django-test-run-test-module)
     ("p" "Project"        django-test-run-test-project)]]
   (interactive)
