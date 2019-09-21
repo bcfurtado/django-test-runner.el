@@ -53,7 +53,7 @@ contains the manage.py."
                         (cons 'function (python-info-current-defun))))))
     (string-join (delq nil full-module) ".")))
 
-(defun django-test--generate-at-point-test-command ()
+(defun django-test--generate-function-test-command ()
   "Generate function test command."
   (let ((command (seq-map 'cdr
                    (list
@@ -99,10 +99,10 @@ executed with `comint-mode', otherwise with `compile-mode'."
           (call-interactively 'compile)))
       (kill-buffer project-root-folder))))
 
-(defun django-test-run-test-at-point (&optional args)
+(defun django-test-run-test-function (&optional args)
   "Run django test at the point."
   (interactive (list (django-test-arguments)))
-  (django-test--run-test-command (django-test--generate-at-point-test-command) args))
+  (django-test--run-test-command (django-test--generate-function-test-command) args))
 
 (defun django-test-run-test-module (&optional args)
   "Run django test from the current module."
@@ -128,7 +128,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
    ("-f" "Stop at the first failed test."        "--failfast")
    (django-test-runner:--settings)]
   [["Test"
-    ("f" "Function"       django-test-run-test-at-point)
+    ("f" "Function"       django-test-run-test-function)
     ("m" "Module"         django-test-run-test-module)
     ("p" "Project"        django-test-run-test-project)]]
   (interactive)
