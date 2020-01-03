@@ -1,0 +1,31 @@
+name: CI
+on: [push]
+
+jobs:
+  test:
+    name: continuous-integration
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        emacs_version:
+          - '25.3'
+          - '26.1'
+
+    steps:
+      - name: Setup Repository
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Setup Emacs
+        uses: purcell/setup-emacs@v1.0
+        with:
+          version: ${{ matrix.emacs_version }}
+      - name: Setup Cask
+        uses: conao3/setup-cask@v1.0.0
+      - name: Set up dependecies
+        run: make install
+      - name: Run Tests
+        run: make tests
