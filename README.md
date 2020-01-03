@@ -1,4 +1,5 @@
 # django-test-runner.el
+![](https://github.com/bcfurtado/django-test-runner.el/workflows/CI/badge.svg)
 
 Quickly execute Django tests.
 
