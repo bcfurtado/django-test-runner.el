@@ -7,7 +7,7 @@ Quickly execute Django tests.
 
 ## What it does?
 
-This package provides a function to generate commands to run specific Django tests. Invoke the function anywhere on the python file, and you'll have a test command for that file. When the cursor is at the class or method name, it generates a specific command for it. You can see it in use [here](https://streamable.com/hf593).
+This package provides a function to generate commands to run specific Django tests. Invoke the function anywhere on the python file, and you'll have a test command for that file. When the cursor is at the class or method name, it generates a specific command for it. You can see it in use [here](https://imgur.com/a/da2hI2Y).
 
 ## Motivation
 A quick feedback cycle is key for good and efficient development workflow. TDD helps with that, and this package aims to give you the necessary tooling when executing Django tests on Emacs.
