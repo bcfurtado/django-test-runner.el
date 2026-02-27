@@ -6,7 +6,7 @@
 ;; Keywords: convenience
 ;; URL: https://github.com/bcfurtado/django-test-runner.el
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "24.4") (transient "0.1.0"))
+;; Package-Requires: ((emacs "25.1") (transient "0.1.0"))
 
 ;;; Commentary:
 
