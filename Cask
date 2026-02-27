@@ -4,7 +4,7 @@
 (package-file "django-test-runner.el")
 
 (depends-on "transient")
-(depends-on "el-mock")
 
 (development
+ (depends-on "el-mock")
  (depends-on "ert-runner"))
