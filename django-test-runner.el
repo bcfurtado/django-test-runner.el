@@ -149,6 +149,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
   :shortarg "-s"
   :argument "--settings=")
 
+;;;###autoload
 (define-transient-command django-test-runner ()
   "Open django test pop up."
   ["Arguments"
