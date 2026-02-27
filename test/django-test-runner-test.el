@@ -31,3 +31,5 @@
     (with-mock
      (stub python-info-current-defun => nil)
      (should (eq (django-test-runner--current-class) nil)))))
+
+;;; django-test-runner-test.el ends here
