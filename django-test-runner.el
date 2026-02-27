@@ -20,20 +20,20 @@
 (require 'subr-x)
 (require 'transient)
 
-(defconst django-test-manage-py "manage.py")
-(defconst django-test-command "test")
+(defconst django-test-runner-manage-py "manage.py")
+(defconst django-test-runner-command "test")
 
-(defun django-test--project-folder ()
+(defun django-test-runner--project-folder ()
   "Return Django root project path.
 Currently, we are assuming that the root folder is the one that
 contains the manage.py."
-  (locate-dominating-file (buffer-file-name) django-test-manage-py))
+  (locate-dominating-file (buffer-file-name) django-test-runner-manage-py))
 
-(defun django-test--file-path ()
+(defun django-test-runner--file-path ()
   "Return the path of the file to be tested relative to the project root directory."
-  (file-relative-name (buffer-file-name) (django-test--project-folder)))
+  (file-relative-name (buffer-file-name) (django-test-runner--project-folder)))
 
-(defun django-test--convert-path-into-python-module (path)
+(defun django-test-runner--convert-path-into-python-module (path)
   "Convert PATH into python module."
   (replace-regexp-in-string "/" "."
     (string-join
@@ -41,77 +41,77 @@ contains the manage.py."
         (file-name-directory path)
         (file-name-base path)))))
 
-(defun django-test--current-module ()
+(defun django-test-runner--current-module ()
   "Return the current python module based on file path."
-  (django-test--convert-path-into-python-module (django-test--file-path)))
+  (django-test-runner--convert-path-into-python-module (django-test-runner--file-path)))
 
-(defun django-test--current-class ()
+(defun django-test-runner--current-class ()
   "Return the current class name based on point."
   (let ((current-defun (python-info-current-defun)))
     (when current-defun
       (car (split-string current-defun "\\.")))))
 
-(defun django-test--generate-python-module-with-function ()
+(defun django-test-runner--generate-python-module-with-function ()
   "Generate python module with current function."
   (let ((full-module (seq-map 'cdr
                       (list
-                        (cons 'module (django-test--current-module))
+                        (cons 'module (django-test-runner--current-module))
                         (cons 'function (python-info-current-defun))))))
     (string-join (delq nil full-module) ".")))
 
-(defun django-test--generate-python-module-with-class ()
+(defun django-test-runner--generate-python-module-with-class ()
   "Generate python module with current class."
   (let ((full-module (seq-map 'cdr
                       (list
-                        (cons 'module (django-test--current-module))
-                        (cons 'function (django-test--current-class))))))
+                        (cons 'module (django-test-runner--current-module))
+                        (cons 'function (django-test-runner--current-class))))))
     (string-join (delq nil full-module) ".")))
 
-(defun django-test--generate-function-test-command ()
+(defun django-test-runner--generate-function-test-command ()
   "Generate function test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
-                     (cons 'manage-py django-test-manage-py)
-                     (cons 'command django-test-command)
-                     (cons 'module (django-test--generate-python-module-with-function))))))
+                     (cons 'manage-py django-test-runner-manage-py)
+                     (cons 'command django-test-runner-command)
+                     (cons 'module (django-test-runner--generate-python-module-with-function))))))
     (string-trim (string-join command " "))))
 
-(defun django-test--generate-class-test-command ()
+(defun django-test-runner--generate-class-test-command ()
   "Generate class test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
-                     (cons 'manage-py django-test-manage-py)
-                     (cons 'command django-test-command)
-                     (cons 'module (django-test--generate-python-module-with-class))))))
+                     (cons 'manage-py django-test-runner-manage-py)
+                     (cons 'command django-test-runner-command)
+                     (cons 'module (django-test-runner--generate-python-module-with-class))))))
     (string-trim (string-join command " "))))
 
-(defun django-test--generate-module-test-command ()
+(defun django-test-runner--generate-module-test-command ()
   "Generate module test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
-                     (cons 'manage-py django-test-manage-py)
-                     (cons 'command django-test-command)
-                     (cons 'module (django-test--current-module))))))
+                     (cons 'manage-py django-test-runner-manage-py)
+                     (cons 'command django-test-runner-command)
+                     (cons 'module (django-test-runner--current-module))))))
     (string-trim (string-join command " "))))
 
-(defun django-test--generate-project-test-command ()
+(defun django-test-runner--generate-project-test-command ()
   "Generate project test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
-                     (cons 'manage-py django-test-manage-py)
-                     (cons 'command django-test-command)))))
+                     (cons 'manage-py django-test-runner-manage-py)
+                     (cons 'command django-test-runner-command)))))
     (string-trim (string-join command " "))))
 
-(defun django-test--run-test-command (prefix-command &optional args)
+(defun django-test-runner--run-test-command (prefix-command &optional args)
   "Invoke the compile mode with the test PREFIX-COMMAND and ARGS if provided.
 When '--no-input' parameter is not available, execute tests are
 executed with `comint-mode', otherwise with `compile-mode'."
   (save-excursion
-    (let* ((project-root-folder (find-file-noselect (django-test--project-folder)))
+    (let* ((project-root-folder (find-file-noselect (django-test-runner--project-folder)))
           (arguments (string-join args " "))
           (command (string-join (list prefix-command arguments) " ")))
       (setq compilation-read-command t)
@@ -123,25 +123,25 @@ executed with `comint-mode', otherwise with `compile-mode'."
           (call-interactively 'compile)))
       (kill-buffer project-root-folder))))
 
-(defun django-test-run-test-function (&optional args)
+(defun django-test-runner-run-test-function (&optional args)
   "Run django test function at point with optional ARGS."
-  (interactive (list (django-test-arguments)))
-  (django-test--run-test-command (django-test--generate-function-test-command) args))
+  (interactive (list (django-test-runner-arguments)))
+  (django-test-runner--run-test-command (django-test-runner--generate-function-test-command) args))
 
-(defun django-test-run-test-class (&optional args)
+(defun django-test-runner-run-test-class (&optional args)
   "Run django test class at point with optional ARGS."
-  (interactive (list (django-test-arguments)))
-  (django-test--run-test-command (django-test--generate-class-test-command) args))
+  (interactive (list (django-test-runner-arguments)))
+  (django-test-runner--run-test-command (django-test-runner--generate-class-test-command) args))
 
-(defun django-test-run-test-module (&optional args)
+(defun django-test-runner-run-test-module (&optional args)
   "Run django test from the current module with optional ARGS."
-  (interactive (list (django-test-arguments)))
-  (django-test--run-test-command (django-test--generate-module-test-command) args))
+  (interactive (list (django-test-runner-arguments)))
+  (django-test-runner--run-test-command (django-test-runner--generate-module-test-command) args))
 
-(defun django-test-run-test-project (&optional args)
+(defun django-test-runner-run-test-project (&optional args)
   "Run all test suites for the current project with optional ARGS."
-  (interactive (list (django-test-arguments)))
-  (django-test--run-test-command (django-test--generate-project-test-command) args))
+  (interactive (list (django-test-runner-arguments)))
+  (django-test-runner--run-test-command (django-test-runner--generate-project-test-command) args))
 
 (transient-define-argument django-test-runner:--settings ()
   :description "Run with a custom settings module"
@@ -160,14 +160,14 @@ executed with `comint-mode', otherwise with `compile-mode'."
    ("-f" "Stop at the first failed test."        "--failfast")
    (django-test-runner:--settings)]
   [["Test"
-    ("f" "Function"       django-test-run-test-function)
-    ("c" "Class"          django-test-run-test-class)
-    ("m" "Module"         django-test-run-test-module)
-    ("p" "Project"        django-test-run-test-project)]]
+    ("f" "Function"       django-test-runner-run-test-function)
+    ("c" "Class"          django-test-runner-run-test-class)
+    ("m" "Module"         django-test-runner-run-test-module)
+    ("p" "Project"        django-test-runner-run-test-project)]]
   (interactive)
   (transient-setup 'django-test-runner))
 
-(defun django-test-arguments nil
+(defun django-test-runner-arguments nil
   "Return the current transient arguments for django-test-runner."
   (transient-args 'django-test-runner))
 
