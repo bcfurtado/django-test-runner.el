@@ -6,7 +6,7 @@
 ;; Keywords: convenience
 ;; URL: https://github.com/bcfurtado/django-test-runner.el
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "25.1") (transient "0.1.0"))
+;; Package-Requires: ((emacs "25.1") (transient "0.3.0"))
 
 ;;; Commentary:
 
@@ -143,7 +143,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-project-test-command) args))
 
-(define-infix-argument django-test-runner:--settings ()
+(transient-define-argument django-test-runner:--settings ()
   :description "Run with a custom settings module"
   :class 'transient-option
   :shortarg "-s"
@@ -152,7 +152,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
 ;;; Popup
 
 ;;;###autoload
-(define-transient-command django-test-runner ()
+(transient-define-prefix django-test-runner ()
   "Open django test pop up."
   ["Arguments"
    ("-k" "Preserves the test DB between runs."   ("-k" "--keepdb"))

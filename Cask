@@ -3,7 +3,7 @@
 
 (package-file "django-test-runner.el")
 
-(depends-on "transient")
+(depends-on "transient" "0.3.0")
 
 (development
  (depends-on "el-mock")
