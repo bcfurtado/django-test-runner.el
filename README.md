@@ -16,12 +16,13 @@ A quick feedback cycle is key for good and efficient development workflow. TDD h
 
 ### Installation
 
-This package is not on melpa yet. If you would like to install it in the meantime and you are using [use-package](https://github.com/jwiegley/use-package) and [straight.el](https://github.com/raxod502/straight.el), you can:
+This package is not on melpa yet. If you would like to install it in the meantime and you are using Emacs 29+ with built-in `use-package` and `:vc` support, you can:
 
 ``` emacs-lisp
 (use-package django-test-runner
-  :straight (:host github
-             :repo "bcfurtado/django-test-runner.el"))
+  :ensure t
+  :vc (:url "https://github.com/bcfurtado/django-test-runner.el"
+        :rev :newest))
 
 (use-package python
   :after (django-test-runner)
@@ -29,7 +30,7 @@ This package is not on melpa yet. If you would like to install it in the meantim
          ("<f10>" . django-test-runner)))
 ```
 
-Otherwise, save `django-test-runner.el` locally and install [`transient`](https://github.com/magit/transient) package. `transient` is [available in melpa](https://melpa.org/#/transient).
+Otherwise, save `django-test-runner.el` locally and install [`transient`](https://github.com/magit/transient) 0.3.0+ package. `transient` is [available in melpa](https://melpa.org/#/transient).
 
 ``` emacs-lisp
 (load "~/.emacs.d/django-test-runner.el")
@@ -64,7 +65,7 @@ Otherwise, save `django-test-runner.el` locally and install [`transient`](https:
 (advice-add 'compile :after follow-compilation)
 ```
 
-More information about the Django test options can be found on [`Django documentation`](https://docs.djangoproject.com/en/2.2/ref/django-admin/).
+More information about the Django test options can be found on [`Django documentation`](https://docs.djangoproject.com/en/stable/ref/django-admin/).
 
 ## License
 
