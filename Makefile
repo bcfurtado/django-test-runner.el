@@ -1,5 +1,13 @@
 install:
-	cask install
+	eask install-deps --dev
 
 tests:
-	cask exec ert-runner -l django-test-runner.el test/django-test-runner-test.el
+	eask exec ert-runner
+
+checkdoc:
+	eask lint checkdoc
+
+package-lint:
+	eask lint package django-test-runner.el
+
+lint: checkdoc package-lint
