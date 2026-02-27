@@ -53,7 +53,7 @@ contains the manage.py."
 
 (defun django-test-runner--generate-python-module-with-function ()
   "Generate python module with current function."
-  (let ((full-module (seq-map 'cdr
+  (let ((full-module (seq-map #'cdr
                       (list
                         (cons 'module (django-test-runner--current-module))
                         (cons 'function (python-info-current-defun))))))
@@ -61,7 +61,7 @@ contains the manage.py."
 
 (defun django-test-runner--generate-python-module-with-class ()
   "Generate python module with current class."
-  (let ((full-module (seq-map 'cdr
+  (let ((full-module (seq-map #'cdr
                       (list
                         (cons 'module (django-test-runner--current-module))
                         (cons 'function (django-test-runner--current-class))))))
@@ -69,7 +69,7 @@ contains the manage.py."
 
 (defun django-test-runner--generate-function-test-command ()
   "Generate function test command."
-  (let ((command (seq-map 'cdr
+  (let ((command (seq-map #'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-runner-manage-py)
@@ -79,7 +79,7 @@ contains the manage.py."
 
 (defun django-test-runner--generate-class-test-command ()
   "Generate class test command."
-  (let ((command (seq-map 'cdr
+  (let ((command (seq-map #'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-runner-manage-py)
@@ -89,7 +89,7 @@ contains the manage.py."
 
 (defun django-test-runner--generate-module-test-command ()
   "Generate module test command."
-  (let ((command (seq-map 'cdr
+  (let ((command (seq-map #'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-runner-manage-py)
@@ -99,7 +99,7 @@ contains the manage.py."
 
 (defun django-test-runner--generate-project-test-command ()
   "Generate project test command."
-  (let ((command (seq-map 'cdr
+  (let ((command (seq-map #'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
                      (cons 'manage-py django-test-runner-manage-py)
