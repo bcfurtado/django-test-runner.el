@@ -5,7 +5,7 @@
 ;; Author: Bruno Furtado <bruno@bcfurtado.com>
 ;; Keywords: convenience
 ;; URL: https://github.com/bcfurtado/django-test-runner.el
-;; Package-Version: 0
+;; Version: 0.1.0
 ;; Package-Requires: ((emacs "24.4") (transient "0.1.0"))
 
 ;;; Commentary:
