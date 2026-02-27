@@ -46,7 +46,7 @@ contains the manage.py."
   (django-test--convert-path-into-python-module (django-test--file-path)))
 
 (defun django-test--current-class ()
-  "Return ."
+  "Return the current class name based on point."
   (let ((current-defun (python-info-current-defun)))
     (when current-defun
       (car (split-string current-defun "\\.")))))
@@ -78,7 +78,7 @@ contains the manage.py."
     (string-trim (string-join command " "))))
 
 (defun django-test--generate-class-test-command ()
-  "Generate function test command."
+  "Generate class test command."
   (let ((command (seq-map 'cdr
                    (list
                      (cons 'python-interpreter python-shell-interpreter)
@@ -124,22 +124,22 @@ executed with `comint-mode', otherwise with `compile-mode'."
       (kill-buffer project-root-folder))))
 
 (defun django-test-run-test-function (&optional args)
-  "Run django test at the point."
+  "Run django test function at point with optional ARGS."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-function-test-command) args))
 
 (defun django-test-run-test-class (&optional args)
-  "Run django test at the point."
+  "Run django test class at point with optional ARGS."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-class-test-command) args))
 
 (defun django-test-run-test-module (&optional args)
-  "Run django test from the current module."
+  "Run django test from the current module with optional ARGS."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-module-test-command) args))
 
 (defun django-test-run-test-project (&optional args)
-  "Run all the tests of the current project."
+  "Run all test suites for the current project with optional ARGS."
   (interactive (list (django-test-arguments)))
   (django-test--run-test-command (django-test--generate-project-test-command) args))
 
@@ -148,6 +148,8 @@ executed with `comint-mode', otherwise with `compile-mode'."
   :class 'transient-option
   :shortarg "-s"
   :argument "--settings=")
+
+;;; Popup
 
 ;;;###autoload
 (define-transient-command django-test-runner ()
@@ -166,6 +168,7 @@ executed with `comint-mode', otherwise with `compile-mode'."
   (transient-setup 'django-test-runner))
 
 (defun django-test-arguments nil
+  "Return the current transient arguments for django-test-runner."
   (transient-args 'django-test-runner))
 
 (provide 'django-test-runner)
